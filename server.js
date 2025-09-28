@@ -23,6 +23,9 @@ io.on('connection', (socket) => {
   socket.on('join-session', (sessionId) => {
     socket.join(sessionId);
     console.log(`Cliente ${socket.id} entrou na sessão ${sessionId}`);
+    
+    // Notificar que um mobile conectou
+    socket.to(sessionId).emit('mobile-connected');
   });
 
   socket.on('photo-captured', (data) => {
@@ -42,6 +45,11 @@ io.on('connection', (socket) => {
     console.log(`Sessão ${sessionId} reiniciada`);
   });
 
+  socket.on('mobile-connected', (sessionId) => {
+    socket.to(sessionId).emit('mobile-connected');
+    console.log(`Celular conectado na sessão ${sessionId}`);
+  });
+
   socket.on('disconnect', () => {
     console.log('Cliente desconectado:', socket.id);
   });
@@ -59,5 +67,6 @@ app.get('/health', (req, res) => {
 
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
+  console.log(`🚀 Servidor rodando na porta ${PORT}`);
+  console.log(`📱 WebSocket pronto para conexões`);
 });
